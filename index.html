@@ -59,7 +59,7 @@ p{margin:0}
 .b li{margin:3px 0}
 .b .hint{color:var(--hint);font-size:13px;margin-top:6px}
 .b.wide{max-width:100%;width:100%;padding:0;background:none;box-shadow:none;border-radius:0}
-.intro h1{font:700 30px/1.05 var(--display);letter-spacing:-.02em;margin:4px 0 8px}
+.intro h1{font:700 24px/1.15 var(--display);letter-spacing:-.01em;margin:2px 0 8px}
 .intro .role{font-weight:600;color:var(--accent)}
 
 .caption{display:inline-block;margin:6px 4px 0;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--hint);font-size:12.5px}
@@ -160,7 +160,7 @@ p{margin:0}
   const replies = document.getElementById("replies");
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const sleep = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
-  let data = null, busy = false;
+  let data = null, busy = false, opening = true;  // opening: при первом показе страницу не прокручиваем
 
   const MOCKS = {
     "ai-assistant": `
@@ -193,9 +193,6 @@ p{margin:0}
         <div class="page"><div><h4>Ремонт квартир под ключ</h4><div class="lines" aria-hidden="true"><span></span><span></span></div></div><div class="cta">Рассчитать смету</div></div>
       </div>
       <div class="notice"><span class="dot" aria-hidden="true"></span>Заявка ушла в CRM и в Telegram</div>`,
-    "lead-radar": `
-      <div class="radar"><span class="score">86</span><div class="t">Нужен бот записи для барбершопа</div><div class="meta">Kwork, бюджет 40 000 ₽, 4 мин назад</div></div>
-      <div class="msg bot">Черновик отклика готов: суть задачи, план и один вопрос заказчику</div>`,
   };
   const screen = (id) => MOCKS[id] ? `<div class="screen" aria-hidden="true">${MOCKS[id]}</div>` : "";
 
@@ -204,13 +201,13 @@ p{margin:0}
     li.className = "b in " + cls;
     li.innerHTML = html;
     chat.appendChild(li);
-    li.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "end" });
+    if (!opening) li.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "end" });
     return li;
   }
   async function say(html, cls = "") {
     const t = add('<span class="typing" aria-label="печатает"><i></i><i></i><i></i></span>', "");
     t.style.padding = "0";
-    await sleep(Math.min(900, 300 + html.length * 2));
+    await sleep(Math.min(450, 200 + html.length));
     t.remove();
     return add(html, cls);
   }
@@ -222,36 +219,48 @@ p{margin:0}
   }
   async function run(item) {
     if (busy) return;
+    haptic();
     busy = true; replies.innerHTML = "";
     if (item.echo !== false) me(item.t);
     try { await item.go(); } finally { busy = false; }
   }
 
-  const contactUrl = () => "https://t.me/" + encodeURIComponent(data.profile.telegram || "");
+  // Ссылка на чат с заготовкой первого сообщения — клиенту не нужно придумывать, с чего начать
+  const contactUrl = (text) => "https://t.me/" + encodeURIComponent(data.profile.telegram || "")
+    + (text ? "?text=" + encodeURIComponent(text) : "");
+  const haptic = () => { try { tg && tg.HapticFeedback.selectionChanged(); } catch (e) {} };
+  function openChat(text) {
+    const url = contactUrl(text);
+    if (tg) tg.openTelegramLink(url); else window.open(url, "_blank");
+  }
   const write = { t: "Написать лично", primary: true, echo: false, go: async () => {
-    if (tg) tg.openTelegramLink(contactUrl()); else window.open(contactUrl(), "_blank");
+    openChat("Здравствуйте! Хочу обсудить задачу: ");
     menu();
   }};
   const MENU = () => [
     { t: "Что можешь сделать", go: showSolutions },
-    { t: "Твои проекты", go: showProject },
+    (data.cases || []).length ? { t: "Твои проекты", go: showProject } : null,
+    { t: "Сколько стоит?", go: showPrice },
     { t: "Как работаешь", go: showProcess },
     write,
-  ];
+  ].filter(Boolean);
   function menu(except) { setReplies(MENU().filter((m) => m.t !== except)); }
 
   async function intro() {
     const p = data.profile;
-    await say(`<div class="intro"><h1>${esc(p.name)}</h1><p class="role">${esc(p.role)}</p></div>`);
-    await say(esc(p.about));
-    await say(`Это портфолио тоже собрано как бот. Выберите, что показать, кнопками внизу.${p.location ? `<p class="hint">${esc(p.location)}</p>` : ""}`);
-    menu();
+    const first = (p.name || "").split(/\s+/)[0];
+    add(`<div class="intro"><h1>Здравствуйте!${first ? ` Я ${esc(first)}` : ""}</h1></div>${esc(p.about)}`
+      + (p.location ? `<p class="hint">${esc(p.location)}</p>` : ""));
+    await say("Это портфолио тоже собрано как бот: листайте карточки и нажимайте кнопки внизу. Вот задачи, которые бизнес заказывает чаще всего, — любую из них могу сделать:");
+    rail(data.solutions);
+    opening = false;
+    menu("Что можешь сделать");
   }
 
-  function rail(items, withStatus) {
+  function rail(items) {
     const li = add(`<div class="rail">${items.map((s) => `
       <button class="slide" data-sol="${esc(s.id)}">
-        ${withStatus ? (s.demo_url ? `<span class="status ready"><i></i>Можно попробовать</span>` : `<span class="status"><i></i>В работе</span>`) : ""}
+        ${s.demo_url ? `<span class="status ready"><i></i>Есть демо</span>` : `<span class="status"><i></i>Демо готовлю</span>`}
         ${screen(s.id)}
         <div class="meta"><b>${esc(s.title)}</b><span>${esc(s.short)}</span><span class="more">${s.demo_url ? "Открыть" : "Подробнее"}</span></div></button>`).join("")}</div>`, "wide");
     li.querySelectorAll("[data-sol]").forEach((b) => b.addEventListener("click", () => {
@@ -261,8 +270,8 @@ p{margin:0}
   }
 
   async function showSolutions() {
-    await say("Вот шесть задач, которые бизнес заказывает чаще всего. Любую из них могу сделать. Листайте и нажимайте на карточку:");
-    rail(data.solutions, false);
+    await say("Задачи, которые бизнес заказывает чаще всего. Листайте и нажимайте на карточку:");
+    rail(data.solutions);
     menu("Что можешь сделать");
   }
 
@@ -270,15 +279,14 @@ p{margin:0}
     await say(`<h3>${esc(s.title)}</h3>${esc(s.pain)}`);
     add(screen(s.id) + `<p class="caption">Пример того, как это может выглядеть у вас</p>`, "wide");
     await say(`Что входит:<ul>${s.includes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`);
-    await say(`Кому подойдёт: ${esc(s.fit.charAt(0).toLowerCase() + s.fit.slice(1))}.${s.demo_url ? ` <a href="${esc(s.demo_url)}" target="_blank" rel="noopener">Попробовать демо</a>` : `<p class="hint">Демо готовлю — скоро здесь можно будет попробовать.</p>`}`);
+    await say(`Кому подойдёт: ${esc(s.fit.charAt(0).toLowerCase() + s.fit.slice(1))}.${s.demo_url ? ` <a href="${esc(s.demo_url)}" target="_blank" rel="noopener">Попробовать демо</a>` : `<p class="hint">Демо этого решения готовлю — скоро здесь можно будет его попробовать.</p>`}`);
     setReplies([
       { t: "Обсудить эту задачу", primary: true, echo: false, go: async () => {
-        const url = contactUrl();
-        if (tg) tg.openTelegramLink(url); else window.open(url, "_blank");
+        openChat(`Здравствуйте! Интересует «${s.title}». Моя задача: `);
         menu();
       }},
+      { t: "Сколько стоит?", go: showPrice },
       { t: "Другие решения", go: showSolutions },
-      { t: "Как работаешь", go: showProcess },
     ]);
   }
 
@@ -294,6 +302,12 @@ p{margin:0}
       rail(data.solutions, true);
     }
     menu("Твои проекты");
+  }
+
+  async function showPrice() {
+    await say("Цена и срок зависят от задачи: сколько интеграций, нужна ли админка, откуда брать данные. Поэтому сначала задаю пару вопросов, а потом называю точную цену и срок — до начала работы.");
+    await say("Напишите в двух словах, что нужно сделать, — отвечу с оценкой.");
+    menu("Сколько стоит?");
   }
 
   async function showProcess() {
@@ -312,7 +326,11 @@ p{margin:0}
         (p.photo ? `<img class="ava" src="${esc(p.photo)}" alt="">` : `<div class="ava" aria-hidden="true">${esc(initials)}</div>`) +
         `<div class="who"><b>${esc(p.name)}</b><span>${esc(p.role)}</span></div>`;
       document.title = p.name + " — портфолио";
-      if (tg) { tg.MainButton.hide(); }
+      if (tg) {
+        tg.MainButton.hide();
+        try { tg.setHeaderColor("secondary_bg_color"); tg.setBackgroundColor("secondary_bg_color"); } catch (e) {}
+        try { tg.disableVerticalSwipes(); } catch (e) {}
+      }
       // t.me/<бот>/<app>?startapp=<id> — сразу ответ про нужное решение
       const start = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
       const sol = start && d.solutions.find((s) => s.id === start);
