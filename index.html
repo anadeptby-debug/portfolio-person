@@ -7,141 +7,193 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:var(--tg-theme-secondary-bg-color,#e9edf3);
+  --bg:var(--tg-theme-secondary-bg-color,#eceff4);
   --surface:var(--tg-theme-section-bg-color,var(--tg-theme-bg-color,#ffffff));
   --text:var(--tg-theme-text-color,#14161b);
   --hint:var(--tg-theme-hint-color,#6b7280);
   --link:var(--tg-theme-link-color,#2f6fe4);
   --accent:var(--tg-theme-button-color,#2f6fe4);
   --on-accent:var(--tg-theme-button-text-color,#ffffff);
-  --tint:color-mix(in srgb,var(--accent) 12%,var(--surface));
-  --line:color-mix(in srgb,var(--hint) 20%,transparent);
-  --up:#1f9d55; --down:#d64545;
+  --tint:color-mix(in srgb,var(--accent) 10%,var(--surface));
+  --line:color-mix(in srgb,var(--hint) 18%,transparent);
+  --shadow:0 1px 2px color-mix(in srgb,#000 10%,transparent);
   --display:"Unbounded",system-ui,sans-serif;
   --body:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not(.tg){
-  --bg:#0f1318;--surface:#1b2027;--text:#eceef2;--hint:#939bab;--link:#7aa7ff;--accent:#4c8bf5;
+  --bg:#0e1116;--surface:#1a1e25;--text:#eef0f3;--hint:#98a0ae;--link:#7aa7ff;--accent:#4c8bf5;
 }}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:15.5px/1.45 var(--body);-webkit-font-smoothing:antialiased}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit}
 a{color:var(--link);text-decoration:none}
 p{margin:0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
 
-/* обои: узор из скобок кода, шестерёнок и облачков, окрашенный акцентом темы */
-.wall{position:fixed;inset:0;z-index:0;background:color-mix(in srgb,var(--accent) 16%,transparent);
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l-8 8 8 8M32 14l8 8-8 8'/%3E%3Ccircle cx='88' cy='26' r='7'/%3E%3Cpath d='M88 13v4M88 35v4M75 26h4M97 26h4M79 17l3 3M94 32l3 3M97 17l-3 3M82 32l-3 3'/%3E%3Cpath d='M20 76h26a6 6 0 016 6v10a6 6 0 01-6 6H32l-8 6v-6h-4a6 6 0 01-6-6V82a6 6 0 016-6z'/%3E%3Cpath d='M76 80l10 10 18-20'/%3E%3Ccircle cx='60' cy='58' r='2'/%3E%3C/svg%3E") 0 0/120px 120px;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l-8 8 8 8M32 14l8 8-8 8'/%3E%3Ccircle cx='88' cy='26' r='7'/%3E%3Cpath d='M88 13v4M88 35v4M75 26h4M97 26h4M79 17l3 3M94 32l3 3M97 17l-3 3M82 32l-3 3'/%3E%3Cpath d='M20 76h26a6 6 0 016 6v10a6 6 0 01-6 6H32l-8 6v-6h-4a6 6 0 01-6-6V82a6 6 0 016-6z'/%3E%3Cpath d='M76 80l10 10 18-20'/%3E%3Ccircle cx='60' cy='58' r='2'/%3E%3C/svg%3E") 0 0/120px 120px}
+/* фон: бледный узор, чтобы не мешал тексту */
+.wall{position:fixed;inset:0;z-index:0;background:color-mix(in srgb,var(--hint) 9%,transparent);
+  -webkit-mask:var(--pattern) 0 0/120px 120px;mask:var(--pattern) 0 0/120px 120px;
+  --pattern:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l-8 8 8 8M32 14l8 8-8 8'/%3E%3Ccircle cx='88' cy='26' r='7'/%3E%3Cpath d='M88 13v4M88 35v4M75 26h4M97 26h4'/%3E%3Cpath d='M20 76h26a6 6 0 016 6v10a6 6 0 01-6 6H32l-8 6v-6h-4a6 6 0 01-6-6V82a6 6 0 016-6z'/%3E%3Cpath d='M76 80l10 10 18-20'/%3E%3C/svg%3E")}
 
-/* шапка «собеседника» */
-.top{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:center;padding:10px 16px;
-  background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+/* шапка */
+.top{position:sticky;top:0;z-index:4;display:flex;gap:12px;align-items:center;padding:10px 16px;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow)}
 .ava{width:42px;height:42px;border-radius:50%;flex:none;object-fit:cover;background:var(--accent);color:var(--on-accent);
   display:grid;place-items:center;font:700 15px/1 var(--display)}
-.who b{display:block;font:700 15px/1.2 var(--display)}
+.who b{display:block;font:600 15px/1.2 var(--display)}
 .who span{color:var(--hint);font-size:13px}
 
-.chat{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:16px 12px calc(190px + env(safe-area-inset-bottom));
+/* переписка */
+.chat{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:16px 14px calc(120px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;gap:6px;list-style:none}
-.b{max-width:86%;padding:9px 13px;border-radius:18px;background:var(--surface);align-self:flex-start;border-bottom-left-radius:6px;
-  box-shadow:0 1px 1px color-mix(in srgb,#000 8%,transparent)}
-.b.me{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-bottom-left-radius:18px;border-bottom-right-radius:6px}
-.b + .b:not(.me){border-top-left-radius:6px}
-.b.gap{margin-top:10px}
-.b{scroll-margin-bottom:calc(150px + env(safe-area-inset-bottom))}
-.b h3{font:700 17px/1.25 var(--display);margin:2px 0 6px}
-.b ul{margin:4px 0 0;padding-left:18px;list-style:disc}
-.b li{margin:3px 0}
-.b .hint{color:var(--hint);font-size:13px;margin-top:6px}
-.b.wide{max-width:100%;width:100%;padding:0;background:none;box-shadow:none;border-radius:0}
-.intro h1{font:700 24px/1.15 var(--display);letter-spacing:-.01em;margin:2px 0 8px}
-.intro .role{font-weight:600;color:var(--accent)}
-
-.caption{display:inline-block;margin:6px 4px 0;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--hint);font-size:12.5px}
-.typing{display:inline-flex;gap:4px;padding:13px 14px}
+.b{max-width:88%;padding:10px 14px;border-radius:18px;border-bottom-left-radius:6px;background:var(--surface);align-self:flex-start;
+  box-shadow:var(--shadow);scroll-margin-bottom:calc(110px + env(safe-area-inset-bottom))}
+.b.me{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-radius:18px;border-bottom-right-radius:6px;margin-top:10px}
+.b.full{max-width:100%;width:100%;padding:0;background:none;box-shadow:none;border-radius:0}
+.b h2{font:700 21px/1.2 var(--display);letter-spacing:-.01em;margin:2px 0 6px}
+.b strong{font-weight:600}
+.b .hint{color:var(--hint);font-size:13px;margin-top:8px}
+.b ul{margin:6px 0 0;padding-left:18px}.b li{margin:4px 0}
+.skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.skills span{font-size:13px;font-weight:500;padding:4px 10px;border-radius:999px;background:var(--tint);color:var(--accent)}
+.typing{display:inline-flex;gap:4px;padding:4px 2px}
 .typing i{width:7px;height:7px;border-radius:50%;background:var(--hint);opacity:.5}
 
-/* карусель решений */
-.rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;margin:0 -12px;padding-left:12px;scrollbar-width:none}
-.rail::-webkit-scrollbar{display:none}
-.slide{flex:0 0 78%;max-width:300px;scroll-snap-align:start;text-align:left;border:0;padding:0;background:var(--surface);border-radius:20px;overflow:hidden;cursor:pointer;
-  box-shadow:0 1px 1px color-mix(in srgb,#000 8%,transparent)}
-.slide:last-child{margin-right:12px}
-.slide .meta{padding:12px 14px 14px}
-.slide .meta b{display:block;font:500 15px/1.25 var(--display)}
-.slide .meta span{display:block;color:var(--hint);font-size:13px;margin-top:4px}
-.slide .meta .more{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600;font-size:14px}
-.slide{position:relative}
-.status{position:absolute;top:10px;left:10px;z-index:1;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;
-  background:var(--surface);color:var(--hint);display:inline-flex;gap:6px;align-items:center;box-shadow:0 1px 2px color-mix(in srgb,#000 12%,transparent)}
-.status i{width:7px;height:7px;border-radius:50%;background:#e0a100}
-.status.ready{color:var(--up)} .status.ready i{background:var(--up)}
-.status + .screen{padding-top:40px}
+/* заголовок раздела карусели */
+.rail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 2px 2px}
+.rail-head b{font:600 16px/1.2 var(--display)}
+.rail-head span{color:var(--hint);font-size:13px}
+.arrows{display:flex;gap:6px}
+.arrows button{width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;color:var(--text)}
+.arrows button:disabled{opacity:.35;cursor:default}
 
-/* кнопки быстрых ответов */
-.replies{position:fixed;left:0;right:0;bottom:0;z-index:3;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-  background:linear-gradient(to top,var(--bg) 78%,transparent)}
-.replies div{max-width:620px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
-.qr{border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:999px;padding:7px 13px;font-weight:600;font-size:14.5px;cursor:pointer}
-.qr.primary{background:var(--accent);color:var(--on-accent)}
+/* карусель: карточки одной высоты, у каждой своя обложка */
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 2px;padding:6px 2px 10px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.card{flex:0 0 min(78%,272px);height:384px;scroll-snap-align:start;display:flex;flex-direction:column;text-align:left;border:0;padding:0;
+  background:var(--surface);border-radius:22px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow)}
+.card:active{transform:scale(.985)}
+.cover{position:relative;height:200px;flex:none;padding:42px 14px 0;overflow:hidden;
+  background:radial-gradient(120% 90% at 0% 0%,var(--c1),var(--c2));
+  --surface:rgba(255,255,255,.94);--text:#15171c;--hint:#5d6573;--accent:color-mix(in srgb,var(--c3) 72%,#000);--on-accent:#fff;--line:rgba(0,0,0,.08);color:var(--text)}
+.cover::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--c2) 90%,transparent))}
+.chip{position:absolute;top:12px;left:12px;z-index:1;display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:600;
+  padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:#3b4250}
+.chip i{width:7px;height:7px;border-radius:50%;background:#e2a400}
+.chip.ready i{background:#1f9d55}
+.meta{flex:1;display:flex;flex-direction:column;padding:14px 16px 16px;min-height:0}
+.kicker{font-size:12px;font-weight:600;color:var(--c3k,var(--accent));margin-bottom:4px}
+.meta b{font:600 16px/1.25 var(--display);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta .desc{color:var(--hint);font-size:13.5px;margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta .more{margin-top:auto;padding-top:10px;color:var(--c3k);font-weight:600;font-size:14px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:2px}
+.dots i{width:6px;height:6px;border-radius:3px;background:var(--line);transition:width .2s,background .2s}
+.dots i.on{width:18px;background:var(--accent)}
+
+/* палитры обложек */
+.p-ai-assistant{--c1:#8b7cf6;--c2:#5b4bd8;--c3:#5b4bd8;--c3k:#6a5ae0}
+.p-telegram-bot{--c1:#4fc3f7;--c2:#1e88e5;--c3:#1677d2;--c3k:#1e88e5}
+.p-marketplace-parser{--c1:#ffb74d;--c2:#f57c00;--c3:#e06d00;--c3k:#e07800}
+.p-crm-integration{--c1:#4dd0a5;--c2:#0f9d6e;--c3:#0f9d6e;--c3k:#0f9d6e}
+.p-ai-1c{--c1:#ff8a80;--c2:#e53950;--c3:#d6334a;--c3k:#e0425a}
+.p-website{--c1:#78909c;--c2:#37474f;--c3:#37474f;--c3k:#5f7380}
+@media (prefers-color-scheme:dark){.p-website{--c3k:#9fb2bd}.p-ai-assistant{--c3k:#a99cff}}
+.tg .p-website{--c3k:var(--hint)}
+
+/* мини-экраны (макеты) */
+.mock{display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.35}
+.mock .msg{max-width:84%;padding:6px 10px;border-radius:13px;background:var(--surface);border-bottom-left-radius:4px;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.mock .msg.me{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-radius:13px;border-bottom-right-radius:4px}
+.mock .msg small{display:block;font-size:10.5px;opacity:.7;margin-top:2px}
+.mock .ticket{background:var(--surface);border-radius:12px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mock .ticket b{font-weight:600}
+.mock .pill{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:4px 10px;font-weight:700;white-space:nowrap}
+.mock .ok{color:#1f9d55;font-weight:600}
+.mock .sheet{background:var(--surface);border-radius:12px;overflow:hidden;font-variant-numeric:tabular-nums}
+.mock .row{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:5px 10px;border-top:1px solid var(--line)}
+.mock .row:first-child{border-top:0;color:var(--hint);font-size:10.5px}
+.mock .row .up{color:#1f9d55}.mock .row .down{color:#d64545}
+.mock .flow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
+.mock .box{background:var(--surface);border-radius:11px;padding:7px 9px}
+.mock .box small{display:block;color:var(--hint);font-size:10.5px}
+.mock .arrow{width:20px;height:2px;background:#fff;position:relative}
+.mock .arrow::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:6px solid #fff;border-right:0}
+.mock .notice{background:var(--surface);border-radius:11px;padding:6px 9px;display:flex;gap:7px;align-items:center}
+.mock .dot{width:7px;height:7px;border-radius:50%;background:#1f9d55;flex:none}
+.mock .answer{background:var(--surface);border-radius:12px;padding:8px 10px}
+.mock .answer .num{font:700 20px/1.1 var(--display);color:var(--accent)}
+.mock .answer small{color:var(--hint);font-size:10.5px;display:block;margin-top:2px}
+.mock .browser{background:var(--surface);border-radius:11px;overflow:hidden}
+.mock .bar{display:flex;gap:4px;align-items:center;padding:6px 9px;border-bottom:1px solid var(--line)}
+.mock .bar i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.mock .bar span{margin-left:6px;flex:1;height:12px;border-radius:6px;background:rgba(0,0,0,.05)}
+.mock .page{padding:10px;display:grid;grid-template-columns:1.3fr 1fr;gap:8px;align-items:center}
+.mock .page h4{margin:0;font:700 12px/1.2 var(--display)}
+.mock .page .lines span{display:block;height:5px;border-radius:3px;background:var(--line);margin-top:5px}
+.mock .page .lines span:last-child{width:60%}
+.mock .page .cta{background:var(--accent);color:#fff;border-radius:7px;padding:6px;text-align:center;font-weight:600;font-size:11px}
+
+/* кнопки внизу */
+.replies{position:fixed;left:0;right:0;bottom:0;z-index:3;padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--bg) 72%,transparent)}
+.replies div{max-width:640px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.qr{border:1.5px solid color-mix(in srgb,var(--accent) 55%,transparent);background:var(--surface);color:var(--accent);border-radius:999px;
+  padding:8px 14px;font-weight:600;font-size:14px;cursor:pointer;box-shadow:var(--shadow)}
+.qr.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .qr:active{transform:scale(.97)}
 
-/* ---------- мини-экраны ---------- */
-.screen{background:var(--tint);padding:16px 18px;min-height:132px;display:flex;flex-direction:column;justify-content:center;gap:7px;font-size:13px;line-height:1.35}
-.big .screen{min-height:190px;padding:22px;font-size:14px;border-radius:22px;gap:9px}
-.msg{max-width:82%;padding:7px 11px;border-radius:14px;background:var(--surface)}
-.msg.me{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-bottom-right-radius:4px}
-.msg.bot{border-bottom-left-radius:4px}
-.msg small{display:block;color:var(--hint);font-size:11px;margin-top:2px}
-.msg.me small{color:color-mix(in srgb,var(--on-accent) 75%,transparent)}
-.ticket{background:var(--surface);border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.ticket b{font-weight:600}
-.pill{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:5px 12px;font-weight:600;white-space:nowrap}
-.ok{color:var(--up);font-weight:600}
-.sheet{background:var(--surface);border-radius:12px;overflow:hidden;font-variant-numeric:tabular-nums}
-.row{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:6px 11px;border-top:1px solid var(--line)}
-.row:first-child{border-top:0;color:var(--hint);font-size:11px}
-.row .up{color:var(--up)} .row .down{color:var(--down)}
-.flow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
-.box{background:var(--surface);border-radius:12px;padding:8px 10px}
-.box small{display:block;color:var(--hint);font-size:11px}
-.arrow{width:26px;height:2px;background:var(--accent);position:relative}
-.arrow::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:7px solid var(--accent);border-right:0}
-.notice{background:var(--surface);border-radius:12px;padding:7px 10px;display:flex;gap:8px;align-items:center}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--up);flex:none}
-.answer{background:var(--surface);border-radius:14px;padding:10px 12px}
-.answer .num{font:700 22px/1.1 var(--display);color:var(--accent)}
-.answer small{color:var(--hint);font-size:11px;display:block;margin-top:3px}
-.browser{background:var(--surface);border-radius:12px;overflow:hidden}
-.bar{display:flex;gap:5px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)}
-.bar i{width:7px;height:7px;border-radius:50%;background:var(--line)}
-.bar span{margin-left:6px;flex:1;height:14px;border-radius:7px;background:var(--tint)}
-.page{padding:12px;display:grid;grid-template-columns:1.3fr 1fr;gap:10px;align-items:center}
-.page h4{margin:0;font:700 13px/1.2 var(--display)}
-.page .lines span{display:block;height:6px;border-radius:3px;background:var(--line);margin-top:6px}
-.page .lines span:last-child{width:60%}
-.page .cta{background:var(--accent);color:var(--on-accent);border-radius:8px;padding:7px;text-align:center;font-weight:600;font-size:12px}
-.radar{background:var(--surface);border-radius:14px;padding:10px 12px}
-.radar .t{font-weight:600}
-.radar .meta{color:var(--hint);font-size:11px;margin-top:2px}
-.radar .score{float:right;font:700 16px/1 var(--display);color:var(--accent)}
-
-
-.screen{border-radius:0}
-.b.wide .screen{border-radius:20px}
+/* панель решения */
+.shade{position:fixed;inset:0;z-index:8;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .2s}
+.panel{position:fixed;left:0;right:0;bottom:0;z-index:9;height:94vh;max-width:680px;margin:0 auto;background:var(--bg);
+  border-radius:24px 24px 0 0;transform:translateY(102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.panel.open{transform:none}.shade.open{opacity:1;pointer-events:auto}
+.panel-scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:20px}
+.hero{position:relative;padding:54px 18px 22px;background:radial-gradient(120% 100% at 0% 0%,var(--c1),var(--c2));
+  --surface:rgba(255,255,255,.95);--text:#15171c;--hint:#5d6573;--accent:color-mix(in srgb,var(--c3) 72%,#000);--on-accent:#fff;--line:rgba(0,0,0,.08);color:var(--text)}
+.hero .mock{max-width:420px;margin:0 auto;font-size:13.5px}
+.hero .close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#222;font-size:20px;cursor:pointer}
+.hero .chip{top:14px;left:14px}
+.hero .grip{position:absolute;top:7px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:rgba(255,255,255,.7)}
+.hero .cap{margin-top:12px;text-align:center;color:rgba(255,255,255,.92);font-size:12.5px}
+.content{padding:20px 18px 0;display:flex;flex-direction:column;gap:14px}
+.content .kicker{color:var(--c3k);font-size:13px;margin:0}
+.content h1{font:700 25px/1.15 var(--display);letter-spacing:-.015em;margin:2px 0 0}
+.content .lead{color:var(--hint);font-size:15px;margin-top:6px}
+.card2{background:var(--surface);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.card2 h3{font:600 15px/1.3 var(--display);margin:0 0 10px}
+.pain{border-left:4px solid var(--c3);font-size:16px;line-height:1.5}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.checks li{display:flex;gap:10px;align-items:flex-start}
+.checks li::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;margin-top:1px;
+  background:var(--c3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat}
+.fits{display:flex;flex-wrap:wrap;gap:8px}
+.fits span{padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--c3) 12%,var(--surface));font-size:14px;font-weight:500}
+.demo-note{color:var(--hint);font-size:13px}
+/* интерактивный пример */
+.try{display:flex;flex-direction:column;gap:8px}
+.try .log{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:16px;background:color-mix(in srgb,var(--c3) 8%,var(--bg));min-height:120px}
+.try .m{max-width:86%;padding:8px 12px;border-radius:15px;background:var(--surface);border-bottom-left-radius:4px;font-size:14.5px;box-shadow:var(--shadow)}
+.try .m.u{align-self:flex-end;background:var(--c3);color:#fff;border-radius:15px;border-bottom-right-radius:4px}
+.try .m small{display:block;color:var(--hint);font-size:11.5px;margin-top:3px}
+.try .qs{display:flex;flex-wrap:wrap;gap:6px}
+.try .qs button{border:1.5px solid color-mix(in srgb,var(--c3) 50%,transparent);background:var(--surface);color:var(--c3k);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.try .qs button:disabled{opacity:.4;cursor:default}
+.panel-actions{flex:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;background:var(--bg);box-shadow:0 -1px 0 var(--line)}
+.panel-actions .qr{flex:1;text-align:center;padding:12px}
+.panel-actions .qr{color:var(--c3k);border-color:color-mix(in srgb,var(--c3) 50%,transparent)}
+.panel-actions .qr.primary{background:var(--c3);border-color:var(--c3);color:#fff}
+.tg .panel-actions{display:none}
 
 @media (prefers-reduced-motion:no-preference){
   .in{animation:in .22s ease-out}
-  @keyframes in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
-  .typing i{animation:blink 1s infinite}
-  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .typing i{animation:blink 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
   @keyframes blink{50%{opacity:1;transform:translateY(-2px)}}
 }
+@media (prefers-reduced-motion:reduce){.panel,.shade,.dots i{transition:none}}
 </style>
 </head>
 <body>
@@ -149,18 +201,22 @@ p{margin:0}
 <header class="top" id="top"></header>
 <ol class="chat" id="chat" aria-live="polite"></ol>
 <nav class="replies" aria-label="Варианты ответа"><div id="replies"></div></nav>
+<div class="shade" id="shade"></div>
+<section class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+  <div class="panel-scroll" id="pScroll"></div>
+  <div class="panel-actions" id="pActions"></div>
+</section>
 <script>
 (function () {
   const W = window.Telegram && window.Telegram.WebApp;
   const tg = W && W.platform && W.platform !== "unknown" ? W : null;
   if (tg) { document.documentElement.classList.add("tg"); tg.ready(); tg.expand(); }
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const chat = document.getElementById("chat");
-  const replies = document.getElementById("replies");
+  const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const sleep = (ms) => new Promise((r) => setTimeout(r, reduce ? 0 : ms));
-  let data = null, busy = false, opening = true;  // opening: при первом показе страницу не прокручиваем
+  const haptic = () => { try { tg && tg.HapticFeedback.selectionChanged(); } catch (e) {} };
+  let data = null, busy = false, opening = true, current = null;
 
   const MOCKS = {
     "ai-assistant": `
@@ -194,125 +250,159 @@ p{margin:0}
       </div>
       <div class="notice"><span class="dot" aria-hidden="true"></span>Заявка ушла в CRM и в Telegram</div>`,
   };
-  const screen = (id) => MOCKS[id] ? `<div class="screen" aria-hidden="true">${MOCKS[id]}</div>` : "";
+  const mock = (id) => MOCKS[id] ? `<div class="mock" aria-hidden="true">${MOCKS[id]}</div>` : "";
 
+  // ---------- переписка ----------
   function add(html, cls = "") {
     const li = document.createElement("li");
     li.className = "b in " + cls;
     li.innerHTML = html;
-    chat.appendChild(li);
+    $("chat").appendChild(li);
     if (!opening) li.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "end" });
     return li;
   }
   async function say(html, cls = "") {
-    const t = add('<span class="typing" aria-label="печатает"><i></i><i></i><i></i></span>', "");
-    t.style.padding = "0";
+    const t = add('<span class="typing" aria-label="печатает"><i></i><i></i><i></i></span>');
     await sleep(Math.min(450, 200 + html.length));
     t.remove();
     return add(html, cls);
   }
-  function me(text) { add(esc(text), "me gap"); }
 
   function setReplies(items) {
-    replies.innerHTML = items.map((it, i) => `<button class="qr ${it.primary ? "primary" : ""}" data-i="${i}">${esc(it.t)}</button>`).join("");
-    replies.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => run(items[+b.dataset.i])));
+    $("replies").innerHTML = items.map((it, i) => `<button class="qr ${it.primary ? "primary" : ""}" data-i="${i}">${esc(it.t)}</button>`).join("");
+    $("replies").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => run(items[+b.dataset.i])));
   }
   async function run(item) {
     if (busy) return;
-    haptic();
-    busy = true; replies.innerHTML = "";
-    if (item.echo !== false) me(item.t);
+    busy = true; haptic();
+    if (item.echo !== false) add(esc(item.t), "me");
     try { await item.go(); } finally { busy = false; }
   }
 
-  // Ссылка на чат с заготовкой первого сообщения — клиенту не нужно придумывать, с чего начать
-  const contactUrl = (text) => "https://t.me/" + encodeURIComponent(data.profile.telegram || "")
-    + (text ? "?text=" + encodeURIComponent(text) : "");
-  const haptic = () => { try { tg && tg.HapticFeedback.selectionChanged(); } catch (e) {} };
-  function openChat(text) {
-    const url = contactUrl(text);
-    if (tg) tg.openTelegramLink(url); else window.open(url, "_blank");
-  }
-  const write = { t: "Написать лично", primary: true, echo: false, go: async () => {
-    openChat("Здравствуйте! Хочу обсудить задачу: ");
-    menu();
-  }};
+  const contactUrl = (text) => "https://t.me/" + encodeURIComponent(data.profile.telegram || "") + (text ? "?text=" + encodeURIComponent(text) : "");
+  const openChat = (text) => { const u = contactUrl(text); if (tg) tg.openTelegramLink(u); else window.open(u, "_blank"); };
   const MENU = () => [
-    { t: "Что можешь сделать", go: showSolutions },
-    (data.cases || []).length ? { t: "Твои проекты", go: showProject } : null,
+    { t: "Решения", go: showSolutions },
     { t: "Сколько стоит?", go: showPrice },
     { t: "Как работаешь", go: showProcess },
-    write,
-  ].filter(Boolean);
-  function menu(except) { setReplies(MENU().filter((m) => m.t !== except)); }
+    { t: "Написать лично", primary: true, echo: false, go: async () => openChat("Здравствуйте! Хочу обсудить задачу: ") },
+  ];
+  const menu = (except) => setReplies(MENU().filter((m) => m.t !== except));
 
-  async function intro() {
-    const p = data.profile;
-    const first = (p.name || "").split(/\s+/)[0];
-    add(`<div class="intro"><h1>Здравствуйте!${first ? ` Я ${esc(first)}` : ""}</h1></div>${esc(p.about)}`
-      + (p.location ? `<p class="hint">${esc(p.location)}</p>` : ""));
-    await say("Это портфолио тоже собрано как бот: листайте карточки и нажимайте кнопки внизу. Вот задачи, которые бизнес заказывает чаще всего, — любую из них могу сделать:");
-    rail(data.solutions);
-    opening = false;
-    menu("Что можешь сделать");
+  // ---------- карусель ----------
+  function rail(items) {
+    const li = add(`
+      <div class="rail-head"><div><b>${items.length} решений под задачу</b><br><span>Листайте и открывайте карточку</span></div>
+        <div class="arrows"><button data-dir="-1" aria-label="Назад">‹</button><button data-dir="1" aria-label="Вперёд">›</button></div></div>
+      <div class="rail" tabindex="0" aria-label="Решения">${items.map((s) => `
+        <button class="card p-${esc(s.id)}" data-sol="${esc(s.id)}" aria-label="${esc(s.title)}">
+          <div class="cover">${s.demo_url ? `<span class="chip ready"><i></i>Есть демо</span>` : `<span class="chip"><i></i>Демо готовлю</span>`}${mock(s.id)}</div>
+          <div class="meta"><span class="kicker">${esc(s.category || "")}</span><b>${esc(s.title)}</b>
+            <span class="desc">${esc(s.short)}</span><span class="more">Подробнее</span></div>
+        </button>`).join("")}</div>
+      <div class="dots" aria-hidden="true">${items.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>`, "full");
+    const r = li.querySelector(".rail"), dots = li.querySelectorAll(".dots i"), [prev, next] = li.querySelectorAll(".arrows button");
+    const step = () => r.querySelector(".card").offsetWidth + 12;
+    const sync = () => {
+      const i = Math.round(r.scrollLeft / step());
+      dots.forEach((d, k) => d.classList.toggle("on", k === Math.min(i, dots.length - 1)));
+      prev.disabled = r.scrollLeft < 4; next.disabled = r.scrollLeft + r.clientWidth >= r.scrollWidth - 4;
+    };
+    r.addEventListener("scroll", () => requestAnimationFrame(sync), { passive: true });
+    li.querySelectorAll(".arrows button").forEach((b) => b.addEventListener("click", () => r.scrollBy({ left: step() * +b.dataset.dir, behavior: reduce ? "auto" : "smooth" })));
+    li.querySelectorAll("[data-sol]").forEach((b) => b.addEventListener("click", () => { haptic(); openPanel(b.dataset.sol); }));
+    sync();
   }
 
-  function rail(items) {
-    const li = add(`<div class="rail">${items.map((s) => `
-      <button class="slide" data-sol="${esc(s.id)}">
-        ${s.demo_url ? `<span class="status ready"><i></i>Есть демо</span>` : `<span class="status"><i></i>Демо готовлю</span>`}
-        ${screen(s.id)}
-        <div class="meta"><b>${esc(s.title)}</b><span>${esc(s.short)}</span><span class="more">${s.demo_url ? "Открыть" : "Подробнее"}</span></div></button>`).join("")}</div>`, "wide");
-    li.querySelectorAll("[data-sol]").forEach((b) => b.addEventListener("click", () => {
-      const s = data.solutions.find((x) => x.id === b.dataset.sol);
-      run({ t: "Расскажи про «" + s.title + "»", go: () => showSolution(s) });
+  // ---------- панель решения ----------
+  function openPanel(id) {
+    const s = (data.solutions || []).find((x) => x.id === id);
+    if (!s) return;
+    current = s;
+    const fits = (s.fit || "").split(/,\s*/).filter(Boolean);
+    $("panel").className = "panel p-" + s.id;
+    $("pScroll").innerHTML = `
+      <div class="hero"><div class="grip" aria-hidden="true"></div>
+        ${s.demo_url ? `<span class="chip ready"><i></i>Есть демо</span>` : `<span class="chip"><i></i>Демо готовлю</span>`}
+        <button class="close" id="pClose" aria-label="Закрыть">×</button>
+        ${mock(s.id)}<p class="cap">Пример того, как это может выглядеть у вас</p></div>
+      <div class="content">
+        <div><p class="kicker">${esc(s.category || "")}</p><h1 id="pTitle">${esc(s.title)}</h1><p class="lead">${esc(s.short)}</p></div>
+        <div class="card2 pain"><h3>Какую задачу решает</h3>${esc(s.pain)}</div>
+        <div class="card2"><h3>Что входит</h3><ul class="checks">${s.includes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>
+        ${fits.length ? `<div class="card2"><h3>Кому подойдёт</h3><div class="fits">${fits.map((f) => `<span>${esc(f)}</span>`).join("")}</div></div>` : ""}
+        ${s.example ? tryBlock(s.example) : ""}
+        ${s.demo_url ? `<div class="card2"><a href="${esc(s.demo_url)}" target="_blank" rel="noopener">Открыть демо</a></div>`
+          : `<p class="demo-note">Работающее демо этого решения готовлю — скоро его можно будет попробовать здесь.</p>`}
+        <div class="card2"><h3>Сколько стоит и сколько делать</h3>Зависит от задачи. Напишите пару строк — задам вопросы и назову точную цену и срок до начала работы.</div>
+      </div>`;
+    $("pActions").innerHTML = `<button class="qr" id="pBack">Все решения</button><button class="qr primary" id="pTalk">Обсудить эту задачу</button>`;
+    $("pClose").addEventListener("click", closePanel);
+    $("pBack").addEventListener("click", closePanel);
+    $("pTalk").addEventListener("click", talk);
+    if (s.example) bindTry(s.example);
+    $("pScroll").scrollTop = 0;
+    $("panel").classList.add("open"); $("shade").classList.add("open");
+    document.body.style.overflow = "hidden";
+    if (tg) { tg.BackButton.show(); tg.MainButton.setText("Обсудить эту задачу"); tg.MainButton.show(); }
+    setTimeout(() => $("pClose").focus({ preventScroll: true }), 50);
+  }
+  function talk() { if (current) openChat(`Здравствуйте! Интересует «${current.title}». Моя задача: `); }
+  function closePanel() {
+    $("panel").classList.remove("open"); $("shade").classList.remove("open");
+    document.body.style.overflow = ""; current = null;
+    if (tg) { tg.BackButton.hide(); tg.MainButton.hide(); }
+  }
+  $("shade").addEventListener("click", closePanel);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && current) closePanel(); });
+
+  // интерактивный пример (ответы заготовлены — это подписано)
+  function tryBlock(ex) {
+    return `<div class="card2"><h3>${esc(ex.title)}</h3><div class="try">
+      <div class="log" id="tLog" aria-live="polite"><div class="m">${esc(ex.greeting)}</div></div>
+      <div class="qs" id="tQs">${ex.qa.map((x, i) => `<button data-q="${i}">${esc(x.q)}</button>`).join("")}</div>
+      <p class="demo-note">${esc(ex.note)}</p></div></div>`;
+  }
+  function bindTry(ex) {
+    const log = $("tLog");
+    $("tQs").querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
+      const x = ex.qa[+b.dataset.q];
+      b.disabled = true; haptic();
+      log.insertAdjacentHTML("beforeend", `<div class="m u">${esc(x.q)}</div>`);
+      log.insertAdjacentHTML("beforeend", `<div class="m" data-t><span class="typing"><i></i><i></i><i></i></span></div>`);
+      log.lastElementChild.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+      await sleep(600);
+      const t = log.querySelector("[data-t]"); if (!t) return;
+      t.removeAttribute("data-t");
+      t.innerHTML = `${esc(x.a)}<small>${esc(x.src)}</small>`;
+      t.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
     }));
   }
 
-  async function showSolutions() {
-    await say("Задачи, которые бизнес заказывает чаще всего. Листайте и нажимайте на карточку:");
+  // ---------- сценарии ----------
+  async function intro() {
+    const p = data.profile, first = (p.name || "").split(/\s+/)[0];
+    add(`<h2>Здравствуйте!${first ? ` Я ${esc(first)}` : ""}</h2>${esc(p.about)}
+      ${(p.skills || []).length ? `<div class="skills">${p.skills.map((k) => `<span>${esc(k)}</span>`).join("")}</div>` : ""}
+      ${p.location ? `<p class="hint">${esc(p.location)}</p>` : ""}`);
+    await say("Вот что могу сделать — решения, которые бизнес заказывает чаще всего. <strong>Откройте карточку</strong>, чтобы посмотреть подробности.");
     rail(data.solutions);
-    menu("Что можешь сделать");
+    opening = false;
+    menu("Решения");
   }
-
-  async function showSolution(s) {
-    await say(`<h3>${esc(s.title)}</h3>${esc(s.pain)}`);
-    add(screen(s.id) + `<p class="caption">Пример того, как это может выглядеть у вас</p>`, "wide");
-    await say(`Что входит:<ul>${s.includes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`);
-    await say(`Кому подойдёт: ${esc(s.fit.charAt(0).toLowerCase() + s.fit.slice(1))}.${s.demo_url ? ` <a href="${esc(s.demo_url)}" target="_blank" rel="noopener">Попробовать демо</a>` : `<p class="hint">Демо этого решения готовлю — скоро здесь можно будет его попробовать.</p>`}`);
-    setReplies([
-      { t: "Обсудить эту задачу", primary: true, echo: false, go: async () => {
-        openChat(`Здравствуйте! Интересует «${s.title}». Моя задача: `);
-        menu();
-      }},
-      { t: "Сколько стоит?", go: showPrice },
-      { t: "Другие решения", go: showSolutions },
-    ]);
+  async function showSolutions() {
+    await say("Вот решения ещё раз — листайте и открывайте:");
+    rail(data.solutions);
+    menu("Решения");
   }
-
-  async function showProject() {
-    const c = (data.cases || [])[0];
-    if (!c) { await say("Скоро покажу здесь свои проекты."); return menu(); }
-    await say(`<h3>${esc(c.title)}</h3>${esc(c.task || c.summary)}`);
-    add(screen(c.id), "wide");
-    await say(`Что сделал:<ul>${(c.did || []).map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`);
-    if (c.facts && c.facts.length) await say(`Результат:<ul>${c.facts.map((i) => `<li>${esc(i)}</li>`).join("")}</ul><p class="hint">Стек: ${esc(c.stack)}</p>`);
-    if ((data.solutions || []).length) {
-      await say("<h3>Делаю сейчас</h3>Собираю работающие демо по задачам, которые бизнес заказывает чаще всего. Как только демо готово, на карточке появится «Можно попробовать».");
-      rail(data.solutions, true);
-    }
-    menu("Твои проекты");
-  }
-
   async function showPrice() {
-    await say("Цена и срок зависят от задачи: сколько интеграций, нужна ли админка, откуда брать данные. Поэтому сначала задаю пару вопросов, а потом называю точную цену и срок — до начала работы.");
+    await say("<strong>Цена и срок зависят от задачи</strong>: сколько интеграций, нужна ли админка, откуда брать данные. Сначала задаю пару вопросов, потом называю точную цену и срок — до начала работы.");
     await say("Напишите в двух словах, что нужно сделать, — отвечу с оценкой.");
     menu("Сколько стоит?");
   }
-
   async function showProcess() {
-    await say(`Работаю так:<ul>${data.profile.process.map((s, i) => `<li>${esc(s)}</li>`).join("")}</ul>`);
-    await say("Чтобы начать, напишите пару строк о задаче. Задам вопросы и предложу решение, срок и цену.");
+    await say(`<strong>Работаю так:</strong><ul>${data.profile.process.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>`);
+    await say("Чтобы начать, напишите пару строк о задаче — задам вопросы и предложу решение, срок и цену.");
     menu("Как работаешь");
   }
 
@@ -320,28 +410,22 @@ p{margin:0}
     .then((r) => r.json())
     .then(async (d) => {
       data = d;
-      const p = d.profile;
-      const initials = (p.name || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("");
-      document.getElementById("top").innerHTML =
-        (p.photo ? `<img class="ava" src="${esc(p.photo)}" alt="">` : `<div class="ava" aria-hidden="true">${esc(initials)}</div>`) +
-        `<div class="who"><b>${esc(p.name)}</b><span>${esc(p.role)}</span></div>`;
+      const p = d.profile, initials = (p.name || "?").split(/\s+/).map((w) => w[0]).slice(0, 2).join("");
+      $("top").innerHTML = (p.photo ? `<img class="ava" src="${esc(p.photo)}" alt="">` : `<div class="ava" aria-hidden="true">${esc(initials)}</div>`)
+        + `<div class="who"><b>${esc(p.name)}</b><span>${esc(p.role)}</span></div>`;
       document.title = p.name + " — портфолио";
       if (tg) {
-        tg.MainButton.hide();
+        tg.MainButton.hide(); tg.MainButton.onClick(talk); tg.BackButton.onClick(closePanel);
         try { tg.setHeaderColor("secondary_bg_color"); tg.setBackgroundColor("secondary_bg_color"); } catch (e) {}
         try { tg.disableVerticalSwipes(); } catch (e) {}
       }
-      // t.me/<бот>/<app>?startapp=<id> — сразу ответ про нужное решение
-      const start = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
-      const sol = start && d.solutions.find((s) => s.id === start);
       busy = true;
-      try {
-        await intro();
-        if (sol) { replies.innerHTML = ""; me("Расскажи про «" + sol.title + "»"); await showSolution(sol); }
-        else if (start && (d.cases || []).some((c) => c.id === start)) { replies.innerHTML = ""; me("Твои проекты"); await showProject(); }
-      } finally { busy = false; }
+      try { await intro(); } finally { busy = false; }
+      // t.me/<бот>/<app>?startapp=<id> — сразу открыть нужное решение
+      const start = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
+      if (start && d.solutions.some((s) => s.id === start)) openPanel(start);
     })
-    .catch(() => { chat.innerHTML = '<li class="b">Не удалось загрузить портфолио. Закройте и откройте снова.</li>'; });
+    .catch(() => { $("chat").innerHTML = '<li class="b">Не удалось загрузить портфолио. Закройте и откройте снова.</li>'; });
 })();
 </script>
 </body>
