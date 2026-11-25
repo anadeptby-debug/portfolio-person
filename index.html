@@ -75,7 +75,13 @@ p{margin:0}
 .slide .meta{padding:12px 14px 14px}
 .slide .meta b{display:block;font:500 15px/1.25 var(--display)}
 .slide .meta span{display:block;color:var(--hint);font-size:13px;margin-top:4px}
-.slide .more{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600;font-size:14px}
+.slide .meta .more{display:inline-block;margin-top:10px;color:var(--accent);font-weight:600;font-size:14px}
+.slide{position:relative}
+.status{position:absolute;top:10px;left:10px;z-index:1;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;
+  background:var(--surface);color:var(--hint);display:inline-flex;gap:6px;align-items:center;box-shadow:0 1px 2px color-mix(in srgb,#000 12%,transparent)}
+.status i{width:7px;height:7px;border-radius:50%;background:#e0a100}
+.status.ready{color:var(--up)} .status.ready i{background:var(--up)}
+.status + .screen{padding-top:40px}
 
 /* кнопки быстрых ответов */
 .replies{position:fixed;left:0;right:0;bottom:0;z-index:3;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
@@ -228,7 +234,7 @@ p{margin:0}
   }};
   const MENU = () => [
     { t: "Что можешь сделать", go: showSolutions },
-    { t: "Твой проект", go: showProject },
+    { t: "Твои проекты", go: showProject },
     { t: "Как работаешь", go: showProcess },
     write,
   ];
@@ -242,15 +248,21 @@ p{margin:0}
     menu();
   }
 
-  async function showSolutions() {
-    await say("Вот шесть задач, которые бизнес заказывает чаще всего. Любую из них могу сделать. Листайте и нажимайте на карточку:");
-    const li = add(`<div class="rail">${data.solutions.map((s) => `
-      <button class="slide" data-sol="${esc(s.id)}">${screen(s.id)}
-        <div class="meta"><b>${esc(s.title)}</b><span>${esc(s.short)}</span><span class="more">Подробнее</span></div></button>`).join("")}</div>`, "wide");
+  function rail(items, withStatus) {
+    const li = add(`<div class="rail">${items.map((s) => `
+      <button class="slide" data-sol="${esc(s.id)}">
+        ${withStatus ? (s.demo_url ? `<span class="status ready"><i></i>Можно попробовать</span>` : `<span class="status"><i></i>В работе</span>`) : ""}
+        ${screen(s.id)}
+        <div class="meta"><b>${esc(s.title)}</b><span>${esc(s.short)}</span><span class="more">${s.demo_url ? "Открыть" : "Подробнее"}</span></div></button>`).join("")}</div>`, "wide");
     li.querySelectorAll("[data-sol]").forEach((b) => b.addEventListener("click", () => {
       const s = data.solutions.find((x) => x.id === b.dataset.sol);
       run({ t: "Расскажи про «" + s.title + "»", go: () => showSolution(s) });
     }));
+  }
+
+  async function showSolutions() {
+    await say("Вот шесть задач, которые бизнес заказывает чаще всего. Любую из них могу сделать. Листайте и нажимайте на карточку:");
+    rail(data.solutions, false);
     menu("Что можешь сделать");
   }
 
@@ -277,7 +289,11 @@ p{margin:0}
     add(screen(c.id), "wide");
     await say(`Что сделал:<ul>${(c.did || []).map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`);
     if (c.facts && c.facts.length) await say(`Результат:<ul>${c.facts.map((i) => `<li>${esc(i)}</li>`).join("")}</ul><p class="hint">Стек: ${esc(c.stack)}</p>`);
-    menu("Твой проект");
+    if ((data.solutions || []).length) {
+      await say("<h3>Делаю сейчас</h3>Собираю работающие демо по задачам, которые бизнес заказывает чаще всего. Как только демо готово, на карточке появится «Можно попробовать».");
+      rail(data.solutions, true);
+    }
+    menu("Твои проекты");
   }
 
   async function showProcess() {
@@ -304,7 +320,7 @@ p{margin:0}
       try {
         await intro();
         if (sol) { replies.innerHTML = ""; me("Расскажи про «" + sol.title + "»"); await showSolution(sol); }
-        else if (start && (d.cases || []).some((c) => c.id === start)) { replies.innerHTML = ""; me("Твой проект"); await showProject(); }
+        else if (start && (d.cases || []).some((c) => c.id === start)) { replies.innerHTML = ""; me("Твои проекты"); await showProject(); }
       } finally { busy = false; }
     })
     .catch(() => { chat.innerHTML = '<li class="b">Не удалось загрузить портфолио. Закройте и откройте снова.</li>'; });
