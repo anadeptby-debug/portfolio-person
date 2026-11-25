@@ -76,10 +76,15 @@ p{margin:0}
 .card{flex:0 0 min(78%,272px);height:384px;scroll-snap-align:start;display:flex;flex-direction:column;text-align:left;border:0;padding:0;
   background:var(--surface);border-radius:22px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow)}
 .card:active{transform:scale(.985)}
-.cover{position:relative;height:190px;flex:none;padding:18px 16px 0;overflow:hidden;border-bottom:1px solid var(--line);
-  background:var(--c1);
-  --surface:#ffffff;--text:#1d2026;--hint:#666d79;--accent:#2b2f38;--on-accent:#fff;--line:rgba(0,0,0,.08);color:var(--text)}
-.cover::after{content:"";position:absolute;left:0;right:0;bottom:0;height:28px;background:linear-gradient(to bottom,transparent,var(--c1))}
+.cover{position:relative;height:190px;flex:none;overflow:hidden;background:var(--c1);isolation:isolate}
+.cover .art{position:absolute;right:-34px;top:-26px;width:230px;height:230px;color:var(--c2);z-index:-1}
+.cover .event{position:absolute;left:16px;bottom:18px;max-width:78%;background:#fff;color:#1b1d22;border-radius:14px;padding:10px 13px;
+  box-shadow:0 8px 20px rgba(0,0,0,.18);transform:rotate(-3deg);font-size:13.5px;line-height:1.3}
+.cover .event small{display:block;color:#6a717d;font-size:11.5px;margin-bottom:2px}
+.cover .event b{font:700 17px/1.15 var(--display);display:block;letter-spacing:-.01em}
+.cover .event.tilt-r{transform:rotate(2.5deg)}
+.cover .event .ok{color:#1f9d55}.cover .event .down{color:#d64545}
+.p-other .cover .event{background:#1b1d22;color:#fff}.p-other .cover .event small{color:#a5abb6}
 .chip{position:absolute;top:12px;left:12px;z-index:1;display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:600;
   padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:#3b4250}
 .chip i{width:7px;height:7px;border-radius:50%;background:#e2a400}
@@ -95,16 +100,18 @@ p{margin:0}
 
 /* палитры обложек */
 /* спокойные плоские тона: --c1 фон обложки, --c3 цвет направления */
-.p-ai-assistant{--c1:#e9e5f5;--c3:#6550c9;--c3k:#6550c9}
-.p-telegram-bot{--c1:#dcedf3;--c3:#1f78a8;--c3k:#1f78a8}
-.p-marketplace-parser{--c1:#f3e8d6;--c3:#a8661a;--c3k:#a8661a}
-.p-crm-integration{--c1:#e0ede3;--c3:#2f7d4d;--c3k:#2f7d4d}
-.p-ai-1c{--c1:#f4e2df;--c3:#b4443f;--c3k:#b4443f}
-.p-website{--c1:#e6e8ec;--c3:#4a5463;--c3k:#4a5463}
-.p-other{--c1:#efece6;--c3:#5c5a55;--c3k:#5c5a55}
-@media (prefers-color-scheme:dark){:root:not(.tg) .p-ai-assistant{--c3k:#a99cf0}:root:not(.tg) .p-telegram-bot{--c3k:#6cc0e6}
-  :root:not(.tg) .p-marketplace-parser{--c3k:#e0a35a}:root:not(.tg) .p-crm-integration{--c3k:#71c592}:root:not(.tg) .p-ai-1c{--c3k:#ec8a83}
-  :root:not(.tg) .p-website{--c3k:#a9b4c4}:root:not(.tg) .p-other{--c3k:#b8b4ab}}
+/* насыщенные плоские цвета направлений: --c1 фон обложки, --c2 цвет фигуры, --c3 акцент, --c3k цвет подписи */
+.p-ai-assistant{--c1:#3b2fd6;--c2:#6f63ff;--c3:#3b2fd6;--c3k:#5a4ef0}
+.p-telegram-bot{--c1:#1597e5;--c2:#4fb8f5;--c3:#1283c9;--c3k:#1283c9}
+.p-marketplace-parser{--c1:#f2b01e;--c2:#ffd25c;--c3:#1b1d22;--c3k:#b57d00}
+.p-crm-integration{--c1:#0d8a5e;--c2:#21b07d;--c3:#0d8a5e;--c3k:#0d8a5e}
+.p-ai-1c{--c1:#e5432e;--c2:#ff7259;--c3:#d23a26;--c3k:#d23a26}
+.p-website{--c1:#191b21;--c2:#30343e;--c3:#191b21;--c3k:#5b6372}
+.p-other{--c1:#ece8df;--c2:#d9d3c5;--c3:#1b1d22;--c3k:#6d6a62}
+@media (prefers-color-scheme:dark){:root:not(.tg) .p-ai-assistant{--c3k:#9b93ff}:root:not(.tg) .p-telegram-bot{--c3k:#5cc0f7}
+  :root:not(.tg) .p-marketplace-parser{--c3k:#f2b01e}:root:not(.tg) .p-crm-integration{--c3k:#3fca95}:root:not(.tg) .p-ai-1c{--c3k:#ff7a66}
+  :root:not(.tg) .p-website{--c3k:#a9b4c4}:root:not(.tg) .p-other{--c3k:#bdb7aa}
+  :root:not(.tg) .p-website .cover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}}
 .tg .card .kicker,.tg .content .kicker{color:var(--hint)}
 
 /* мини-экраны (макеты) */
@@ -165,8 +172,9 @@ p{margin:0}
 .hero .mock{max-width:420px;margin:0 auto;font-size:13.5px}
 .hero .close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:#fff;color:#222;font-size:20px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .hero .chip{top:14px;left:14px}
-.hero .grip{position:absolute;top:7px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:rgba(0,0,0,.15)}
-.hero .cap{margin-top:12px;text-align:center;color:#666d79;font-size:12.5px}
+.hero .grip{position:absolute;top:7px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:rgba(255,255,255,.45)}
+.hero .cap{margin-top:12px;text-align:center;color:rgba(255,255,255,.85);font-size:12.5px}
+.p-marketplace-parser .hero .cap,.p-other .hero .cap{color:rgba(0,0,0,.6)}
 .content{padding:20px 18px 0;display:flex;flex-direction:column;gap:14px}
 .content .kicker{color:var(--c3k);font-size:13px;margin:0}
 .content h1{font:700 25px/1.2 var(--body);margin:2px 0 0}
@@ -261,6 +269,27 @@ p{margin:0}
       </div>
       <div class="notice"><span class="dot" aria-hidden="true"></span>Заявка ушла в CRM и в Telegram</div>`,
   };
+
+  // Обложки-постеры: крупная фигура по теме и одна «карточка-событие» результата
+  const ART = {
+    "ai-assistant": '<path d="M30 40h130a24 24 0 0124 24v62a24 24 0 01-24 24H88l-38 30v-30H30a24 24 0 01-24-24V64a24 24 0 0124-24z" fill="currentColor"/><circle cx="62" cy="96" r="11" fill="#fff" opacity=".9"/><circle cx="96" cy="96" r="11" fill="#fff" opacity=".7"/><circle cx="130" cy="96" r="11" fill="#fff" opacity=".5"/>',
+    "telegram-bot": '<path d="M44 12h142v196l-18-12-18 12-18-12-18 12-18-12-18 12-18-12-16 12z" fill="currentColor"/><rect x="66" y="48" width="96" height="12" rx="6" fill="#fff" opacity=".55"/><rect x="66" y="76" width="70" height="12" rx="6" fill="#fff" opacity=".4"/><circle cx="115" cy="140" r="30" fill="#fff" opacity=".25"/>',
+    "marketplace-parser": '<rect x="20" y="120" width="38" height="90" rx="8" fill="currentColor"/><rect x="72" y="80" width="38" height="130" rx="8" fill="currentColor"/><rect x="124" y="40" width="38" height="170" rx="8" fill="currentColor"/><rect x="176" y="96" width="38" height="114" rx="8" fill="currentColor"/>',
+    "crm-integration": '<circle cx="70" cy="70" r="40" fill="currentColor"/><circle cx="170" cy="150" r="46" fill="currentColor"/><circle cx="170" cy="40" r="24" fill="currentColor"/><path d="M98 98l44 30M110 62l38-14" stroke="currentColor" stroke-width="14" stroke-linecap="round"/>',
+    "ai-1c": '<ellipse cx="120" cy="44" rx="78" ry="26" fill="currentColor"/><path d="M42 44v44c0 14 35 26 78 26s78-12 78-26V44" fill="currentColor"/><path d="M42 104v44c0 14 35 26 78 26s78-12 78-26v-44" fill="currentColor" opacity=".8"/><path d="M42 164v30c0 14 35 26 78 26s78-12 78-26v-30" fill="currentColor" opacity=".6"/>',
+    "website": '<rect x="14" y="30" width="210" height="160" rx="18" fill="currentColor"/><circle cx="40" cy="54" r="6" fill="#fff" opacity=".4"/><circle cx="60" cy="54" r="6" fill="#fff" opacity=".4"/><circle cx="80" cy="54" r="6" fill="#fff" opacity=".4"/><path d="M120 108l48 18-20 7 14 22-9 6-14-22-14 15z" fill="#fff"/>',
+    "other": '<path d="M100 20h40v80h80v40h-80v80h-40v-80H20v-40h80z" fill="currentColor"/>',
+  };
+  const EVENT = {
+    "ai-assistant": '<div class="event"><small>Ассистент клиники</small>Записал вас на субботу, <b>11:00</b></div>',
+    "telegram-bot": '<div class="event tilt-r"><small>Бот</small><span class="ok">Оплата прошла</span><b>990 ₽ / месяц</b></div>',
+    "marketplace-parser": '<div class="event"><small>Мониторинг цен</small>Конкурент снизил цену <b class="down">−210 ₽</b></div>',
+    "crm-integration": '<div class="event tilt-r"><small>Новая сделка в CRM</small><b>Анна, кухня</b>источник: реклама</div>',
+    "ai-1c": '<div class="event"><small>Ответ из 1С</small><b>412 800 ₽</b>отгрузки за октябрь</div>',
+    "website": '<div class="event tilt-r"><small>Сайт</small><b>Новая заявка</b>ушла в CRM и в Telegram</div>',
+    "other": '<div class="event"><small>И ещё</small><b>API, скрипты, кабинеты</b>и многое другое</div>',
+  };
+  const cover = (id) => `<div class="cover" aria-hidden="true"><svg class="art" viewBox="0 0 240 240">${ART[id] || ""}</svg>${EVENT[id] || ""}</div>`;
   const mock = (id) => MOCKS[id] ? `<div class="mock" aria-hidden="true">${MOCKS[id]}</div>` : "";
 
   // ---------- переписка ----------
@@ -307,7 +336,7 @@ p{margin:0}
         <div class="arrows"><button data-dir="-1" aria-label="Назад">‹</button><button data-dir="1" aria-label="Вперёд">›</button></div></div>
       <div class="rail" tabindex="0" aria-label="Решения">${items.map((s) => `
         <button class="card p-${esc(s.id)}" data-sol="${esc(s.id)}" aria-label="${esc(s.title)}">
-          <div class="cover">${mock(s.id)}</div>
+          ${cover(s.id)}
           <div class="meta"><span class="kicker">${esc(s.category || "")}</span><b>${esc(s.title)}</b>
             <span class="desc">${esc(s.short)}</span><span class="more">Посмотреть</span></div>
         </button>`).join("")}</div>
@@ -315,7 +344,8 @@ p{margin:0}
     const r = li.querySelector(".rail"), dots = li.querySelectorAll(".dots i"), [prev, next] = li.querySelectorAll(".arrows button");
     const step = () => r.querySelector(".card").offsetWidth + 12;
     const sync = () => {
-      const i = Math.round(r.scrollLeft / step());
+      const atEnd = r.scrollLeft + r.clientWidth >= r.scrollWidth - 4;
+      const i = atEnd ? dots.length - 1 : Math.round(r.scrollLeft / step());
       dots.forEach((d, k) => d.classList.toggle("on", k === Math.min(i, dots.length - 1)));
       prev.disabled = r.scrollLeft < 4; next.disabled = r.scrollLeft + r.clientWidth >= r.scrollWidth - 4;
     };
@@ -340,7 +370,7 @@ p{margin:0}
         <div><p class="kicker">${esc(s.category || "")}</p><h1 id="pTitle">${esc(s.title)}</h1><p class="lead">${esc(s.id === "other" ? s.pain : s.short)}</p></div>
         ${s.example ? tryBlock(s.example) : ""}
         <div class="card2"><h3>${s.id === "other" ? "Что ещё делаю" : "Что умею в этом направлении"}</h3><ul class="checks">${s.includes.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>
-        ${fits.length ? `<div class="card2"><h3>Где пригодится</h3><div class="fits">${fits.map((f) => `<span>${esc(f)}</span>`).join("")}</div></div>` : ""}
+        ${fits.length ? `<div class="card2"><h3>Где пригодится</h3><div class="fits">${fits.map((f) => `<span>${esc(f.charAt(0).toUpperCase() + f.slice(1))}</span>`).join("")}</div></div>` : ""}
         ${s.stack ? `<div class="card2"><h3>Стек</h3><p class="stack">${esc(s.stack)}</p></div>` : ""}
         ${s.demo_url ? `<div class="card2"><a href="${esc(s.demo_url)}" target="_blank" rel="noopener">Открыть демо</a></div>`
           : s.id === "other" ? "" : `<p class="demo-note">Работающее демо по этому направлению скоро появится здесь.</p>`}
