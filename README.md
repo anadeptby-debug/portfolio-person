@@ -44,7 +44,13 @@
 
 ## Подключение к боту
 
-1. В @BotFather: `/newapp` → выберите бота → вставьте адрес страницы → придумайте короткое имя, например `portfolio`.
+1. В @BotFather: `/newapp` → выберите бота и ответьте на вопросы:
+   - **Title:** `Портфолио`
+   - **Description:** `Боты, ИИ-ассистенты и автоматизация для бизнеса. Листайте направления и пишите — отвечу лично.`
+   - **Photo:** `assets/botfather-cover.png` (640×360; исходник — `assets/botfather-cover.html`)
+   - **GIF:** `/empty`
+   - **Web App URL:** адрес страницы из раздела «Публикация»
+   - **Short name:** `portfolio` (латиница, цифры и `_`, от 3 до 30 символов)
 2. Ссылка на портфолио: `https://t.me/<бот>/portfolio`.
 3. Ссылка сразу на нужную карточку: `https://t.me/<бот>/portfolio?startapp=<id>`, где `id` — из
    `portfolio.json` (`ai-assistant`, `telegram-bot`, `marketplace-parser`, `crm-integration`, `ai-1c`, `website`). Удобно вставлять в отклики.
