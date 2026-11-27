@@ -1,0 +1,8 @@
+name = "portfolio-bot"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+APP_URL = "https://anadeptby-debug.github.io/portfolio-person/"
+OWNER_USERNAME = "your_username"   # ваш username без @
+OWNER_NAME = "Имя Фамилия"         # как вас называть в приветствии (в родительном падеже: «портфолио Ивана Петрова»)

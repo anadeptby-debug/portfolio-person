@@ -461,7 +461,8 @@ p{margin:0}
       busy = true;
       try { await intro(); } finally { busy = false; }
       // t.me/<бот>/<app>?startapp=<id> — сразу открыть нужное решение
-      const start = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
+      // направление из ссылки: t.me/<бот>/<app>?startapp=<id>, t.me/<бот>?startapp=<id> или кнопка бота с #s/<id>
+      const start = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || (location.hash.match(/^#s\/([\w-]+)/) || [])[1];
       if (start && d.solutions.some((s) => s.id === start)) openPanel(start);
     })
     .catch(() => { $("chat").innerHTML = '<li class="b">Не удалось загрузить портфолио. Закройте и откройте снова.</li>'; });
